@@ -42,6 +42,10 @@ DEFAULT_PROFILE = {
     # Meta
     "total_interactions": 0,
     "onboarding_done":    False,
+
+    # Yeni onboarding alanları
+    "companion":          "solo",
+    "interests":          [],
 }
 
 
@@ -78,11 +82,6 @@ class UserProfile:
     def apply_onboarding(self, answers: dict):
         """
         Anket cevaplarını profil ağırlıklarına dönüştür.
-        answers = {
-            "travel_style": "budget" | "comfort" | "luxury",
-            "group_size":   1 | 2 | 4 | 6,
-            "priorities":   ["location", "cleanliness", "value", ...]
-        }
         """
         style = answers.get("travel_style", "comfort")
         if style == "budget":
@@ -95,10 +94,14 @@ class UserProfile:
             self.data["budget_sensitivity"]  = 0.1
             self.data["comfort_priority"]    = 1.0
 
+        self.data["companion"] = answers.get("companion", "solo")
+        self.data["interests"] = answers.get("interests", [])
+
         priorities = answers.get("priorities", [])
         if "location"    in priorities: self.data["location_priority"]    = 0.9
         if "cleanliness" in priorities: self.data["cleanliness_priority"] = 0.9
         if "superhost"   in priorities: self.data["superhost_preference"] = 1.0
+        if "communication" in priorities: self.data["communication_priority"] = 0.9 # Dynamic priority if we add it
 
         self.data["onboarding_done"] = True
         self.save()
@@ -195,6 +198,7 @@ class UserProfile:
         """
         loc  = self.data["location_priority"]
         cln  = self.data["cleanliness_priority"]
+        comm = self.data.get("communication_priority", 0.5)
         val  = 1.0 - self.data["budget_sensitivity"] * 0.5  # bütçe odaklıysa value önemli
         base = 0.25  # rating her zaman önemli
 
@@ -206,7 +210,7 @@ class UserProfile:
             "Value for money score": val * 0.20,
             "Accuracy score":        0.10,
             "Checkin score":         0.05,
-            "Communication score":   0.05,
+            "Communication score":   comm * 0.05,
         }
         total = sum(raw.values())
         return {k: v / total for k, v in raw.items()}

@@ -11,7 +11,6 @@ import plotly.graph_objects as go
 from datetime import date, timedelta
 import sys, os
 
-sys.path.insert(0, os.path.dirname(__file__))
 from src.recommender   import load_data, HybridRecommender, UserPreferences
 from src.user_profile  import UserProfile
 from src.date_insights import (
@@ -38,13 +37,13 @@ st.markdown("""
 
 html, body, [data-testid="stAppViewContainer"],
 [data-testid="stAppViewContainer"] > section:first-child {
-    background: #0A0A0F !important;
+    background: #050508 !important;
 }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: #0F0F18 !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
+    background: #0A0A0F !important;
+    border-right: 1px solid rgba(255,255,255,0.04) !important;
 }
 [data-testid="stSidebar"] section { padding-top: 1.5rem !important; }
 [data-testid="stSidebar"] label,
@@ -61,13 +60,14 @@ h1, h2, h3, h4 { color: #FFFFFF !important; font-family: 'Fraunces', Georgia, se
 
 /* ── Hero ── */
 .hero-wrap {
-    background: linear-gradient(135deg, #13103A 0%, #0A0A0F 50%, #0D1A2E 100%);
-    border-radius: 24px;
-    border: 1px solid rgba(120, 100, 255, 0.2);
-    padding: 52px 48px 44px;
-    margin-bottom: 36px;
+    background: linear-gradient(135deg, #1A1A2E 0%, #0A0A0F 100%);
+    border-radius: 32px;
+    border: 1px solid rgba(245, 166, 35, 0.15);
+    padding: 64px 48px 56px;
+    margin-bottom: 40px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 .hero-wrap::before {
     content: '';
@@ -124,19 +124,19 @@ h1, h2, h3, h4 { color: #FFFFFF !important; font-family: 'Fraunces', Georgia, se
 
 /* ── Cards ── */
 .lcard {
-    background: #13131C;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 18px;
-    padding: 22px 24px 18px;
-    margin-bottom: 16px;
+    background: #111118;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 20px;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .lcard:hover {
-    border-color: rgba(245,166,35,0.4);
-    background: #16161F;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border-color: rgba(245,166,35,0.3);
+    background: #151520;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
 .lcard-liked  { border-color: rgba(46,213,115,0.5) !important; background: #0D1A12 !important; }
 .lcard-disliked { opacity: 0.35 !important; }
@@ -160,14 +160,19 @@ h1, h2, h3, h4 { color: #FFFFFF !important; font-family: 'Fraunces', Georgia, se
 }
 .tag {
     display: inline-block;
-    background: rgba(255,255,255,0.06);
-    color: #B0ACBF !important;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 4px 11px;
-    font-size: 0.78em;
-    margin: 2px 3px 2px 0;
+    background: rgba(255,255,255,0.04);
+    color: #A0A0B0 !important;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 0.8em;
+    margin: 4px 6px 4px 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.2s;
+}
+.tag:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(245,166,35,0.2);
 }
 .score-row {
     display: flex; flex-wrap: wrap; gap: 18px;
@@ -402,7 +407,7 @@ GOLD_SCALE = [[0,"#1a1530"],[0.5,"#F5A623"],[1,"#FF6B35"]]
 # ── Data & Model ──────────────────────────────────────────────────────────────
 @st.cache_data(show_spinner="Veri yükleniyor…")
 def get_data():
-    path = os.path.join(os.path.dirname(__file__), "data", "airbnb_sample.csv")
+    path = os.path.join(os.path.dirname(__file__), "data", "airbnb.csv")
     return load_data(path, sample_size=None)
 
 df          = get_data()
@@ -438,27 +443,57 @@ if st.session_state.show_onboarding:
     """, unsafe_allow_html=True)
 
     with st.form("onboarding"):
-        st.markdown("#### ✈️ Seyahat tarzın nedir?")
-        travel_style = st.radio("", ["budget", "comfort", "luxury"],
-            format_func=lambda x: {
-                "budget":  "💸  Bütçe odaklı — ucuz ama işlevsel",
-                "comfort": "🛋️   Konfor odaklı — kaliteli, makul fiyat",
-                "luxury":  "✨  Lüks — fiyat ikinci planda",
-            }[x], horizontal=True, label_visibility="collapsed")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("#### ✈️ Seyahat tarzın nedir?")
+            travel_style = st.radio("", ["budget", "comfort", "luxury"],
+                format_func=lambda x: {
+                    "budget":  "💸 Bütçe odaklı",
+                    "comfort": "🛋️ Konfor odaklı",
+                    "luxury":  "✨ Lüks odaklı",
+                }[x], label_visibility="collapsed")
 
-        st.markdown("#### ⭐ En çok önem verdiğin şeyler")
+        with col2:
+            st.markdown("#### 👥 Kiminle seyahat ediyorsun?")
+            companion = st.radio("", ["solo", "couple", "family", "friends"],
+                format_func=lambda x: {
+                    "solo": "🧍 Tek başıma",
+                    "couple": "💑 Partnerimle",
+                    "family": "👨‍👩‍👧‍👦 Ailemle",
+                    "friends": "🎉 Arkadaş grubumla",
+                }[x], label_visibility="collapsed")
+
+        st.markdown("#### 🎯 En çok önem verdiğin şeyler")
         priorities = st.multiselect("",
-            ["location","cleanliness","superhost","value"],
-            default=["location","cleanliness"],
+            ["location", "cleanliness", "superhost", "value", "communication"],
+            default=["location", "cleanliness"],
             format_func=lambda x: {
                 "location":    "📍 Merkezi konum",
-                "cleanliness": "🧹 Temizlik",
-                "superhost":   "⭐ Superhost güvencesi",
-                "value":       "💰 Para'nın karşılığı",
+                "cleanliness": "🧹 Temizlik ve hijyen",
+                "superhost":   "⭐ Deneyimli ev sahibi (Superhost)",
+                "value":       "💰 Fiyat/Performans dengesi",
+                "communication": "💬 Hızlı iletişim",
             }[x], label_visibility="collapsed")
 
-        if st.form_submit_button("🚀  Profilimi Oluştur", use_container_width=True, type="primary"):
-            profile.apply_onboarding({"travel_style": travel_style, "priorities": priorities})
+        st.markdown("#### 🎭 İlgi alanların neler?")
+        interests = st.multiselect("",
+            ["culture", "nightlife", "nature", "food", "shopping"],
+            default=["culture", "food"],
+            format_func=lambda x: {
+                "culture": "🏛️ Kültür ve Tarih",
+                "nightlife": "💃 Gece Hayatı",
+                "nature": "🌳 Doğa ve Huzur",
+                "food": "🍕 Gastronomi",
+                "shopping": "🛍️ Alışveriş",
+            }[x], label_visibility="collapsed")
+
+        if st.form_submit_button("🚀 Profilimi Oluştur ve Başla", use_container_width=True, type="primary"):
+            profile.apply_onboarding({
+                "travel_style": travel_style,
+                "companion": companion,
+                "priorities": priorities,
+                "interests": interests
+            })
             st.session_state.show_onboarding = False
             st.rerun()
     st.stop()
@@ -480,11 +515,11 @@ with st.sidebar:
     summary = profile.summary()
     st.markdown(f"""
 <div class="profile-card">
-    <div class="profile-style">{summary['style']}</div>
-    <div class="profile-meta">
-        👍 {summary['liked']} beğeni &nbsp;·&nbsp; 🔍 {summary['searches']} arama
-        {f"<br>💶 Ort. bütçen: €{summary['avg_price']:.0f}/gece" if summary['avg_price'] else ""}
-    </div>
+<div class="profile-style">{summary['style']}</div>
+<div class="profile-meta">
+👍 {summary['liked']} beğeni &nbsp;·&nbsp; 🔍 {summary['searches']} arama
+{f"<br>💶 Ort. bütçen: €{summary['avg_price']:.0f}/gece" if summary['avg_price'] else ""}
+</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -575,7 +610,9 @@ if run_btn:
         min_beds=min_beds, max_price=max_price, superhost_only=superhost,
         content_weight=content_w, quality_weight=quality_w,
         score_weights=profile.to_score_weights(),
-        exclude_ids=profile.data["disliked_ids"])
+        exclude_ids=profile.data["disliked_ids"],
+        companion=profile.data.get("companion", "solo"),
+        interests=profile.data.get("interests", []))
     with st.spinner("En iyi seçenekler hazırlanıyor…"):
         recs, stats = recommender.recommend(prefs, n_results=8)
     st.session_state.recs  = recs
