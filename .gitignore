@@ -1,0 +1,26 @@
+# Büyük orijinal veri (GitHub'a yüklenmiyor)
+data/airbnb.csv
+# Kullanıcı profili (kişisel veri)
+data/user_profile.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+env/
+.env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
