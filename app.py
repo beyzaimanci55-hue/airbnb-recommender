@@ -12,7 +12,7 @@ from datetime import date, timedelta
 import sys, os
 
 sys.path.insert(0, os.path.dirname(__file__))
-from src.recommender   import load_data, HybridRecommender, UserPreferences
+from recommender import load_data, HybridRecommender, UserPreferences
 from src.user_profile  import UserProfile
 from src.date_insights import (
     date_to_season, get_destination_insights,
