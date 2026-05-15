@@ -11,9 +11,9 @@ import plotly.graph_objects as go
 from datetime import date, timedelta
 import sys, os
 
-from src.recommender   import load_data, HybridRecommender, UserPreferences
-from src.user_profile  import UserProfile
-from src.date_insights import (
+from recommender   import load_data, HybridRecommender, UserPreferences
+from user_profile  import UserProfile
+from date_insights import (
     date_to_season, get_destination_insights,
     get_price_calendar, build_social_proof,
     SEASON_DESCRIPTIONS,
@@ -407,7 +407,7 @@ GOLD_SCALE = [[0,"#1a1530"],[0.5,"#F5A623"],[1,"#FF6B35"]]
 # ── Data & Model ──────────────────────────────────────────────────────────────
 @st.cache_data(show_spinner="Veri yükleniyor…")
 def get_data():
-    path = os.path.join(os.path.dirname(__file__), "data", "airbnb.csv")
+    path = os.path.join(os.path.dirname(__file__), "airbnb.csv")
     return load_data(path, sample_size=None)
 
 df          = get_data()

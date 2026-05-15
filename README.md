@@ -40,33 +40,32 @@ The final **Hybrid Score** is a configurable weighted combination of content sim
 
 ```
 airbnb-recommender/
-├── app.py                  # Streamlit entry point
-├── src/
-│   ├── __init__.py
-│   └── recommender.py      # Core recommendation engine
-├── data/
-│   └── airbnb.csv          # Dataset (not tracked in git – see below)
-├── requirements.txt
+├── app.py                  # Ana uygulama (Streamlit)
+├── recommender.py          # Hibrit öneri motoru mantığı
+├── user_profile.py         # Kullanıcı profili ve öğrenme sistemi
+├── date_insights.py        # Tarih ve sezon analitiği
+├── airbnb.csv              # Veri seti
+├── requirements.txt        # Gerekli kütüphaneler
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Başlangıç
 
-### 1. Clone the repo
+### 1. Projeyi İndirin
 ```bash
-git clone https://github.com/<your-username>/airbnb-recommender.git
+git clone https://github.com/<kullanici-adiniz>/airbnb-recommender.git
 cd airbnb-recommender
 ```
 
-### 2. Install dependencies
+### 2. Bağımlılıkları Kurun
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Data Setup
-Ensure the dataset is placed at `data/airbnb.csv`. (The repo includes a sample file).
+### 3. Veri Seti
+`airbnb.csv` dosyasının ana dizinde olduğundan emin olun.
 
 ### 4. Run the app
 ```bash
@@ -75,34 +74,34 @@ streamlit run app.py
 
 ---
 
-## 🌐 Deployment (How to share your site)
+## 🌐 Canlıya Taşıma (Sitenizi Paylaşın)
 
-To share this project with others, the easiest way is using **Streamlit Community Cloud**:
+Bu projeyi başkalarıyla paylaşmanın en kolay yolu **Streamlit Community Cloud** kullanmaktır:
 
-1. **Push your code to GitHub:**
-   - Create a new repository on GitHub.
-   - Push your local code:
+1. **Kodunuzu GitHub'a Yükleyin:**
+   - GitHub'da yeni bir repo oluşturun.
+   - Yerel kodunuzu oraya gönderin:
      ```bash
      git init
      git add .
-     git commit -m "Initial commit"
+     git commit -m "İlk sürüm"
      git branch -M main
-     git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+     git remote add origin https://github.com/<kullanici-adiniz>/<repo-adiniz>.git
      git push -u origin main
      ```
 
-2. **Deploy to Streamlit Cloud:**
-   - Go to [share.streamlit.io](https://share.streamlit.io/).
-   - Connect your GitHub account.
-   - Click "New app", select your repo, branch (`main`), and main file path (`app.py`).
-   - Click **Deploy!** Your site will be live at a public URL.
+2. **Streamlit Cloud'da Yayınlayın:**
+   - [share.streamlit.io](https://share.streamlit.io/) adresine gidin.
+   - GitHub hesabınızı bağlayın.
+   - "New app" butonuna basın, reponuzu, dalı (`main`) ve ana dosyayı (`app.py`) seçin.
+   - **Deploy!** butonuna basın. Siteniz birkaç dakika içinde canlıda olacaktır.
 
-3. **Managing Data on Cloud:**
-   - Since the dataset is large, ensure `data/airbnb.csv` is tracked by Git (or use Git LFS if it exceeds 100MB).
+3. **Veri Yönetimi:**
+   - `airbnb.csv` dosyasının GitHub'da olduğundan emin olun (dosya boyutu büyükse Git LFS gerekebilir).
 
 ---
 
-## 🧠 How the Model Works
+## 🧠 Model Nasıl Çalışır?
 
 ### Content-Based Filtering
 Property features (price, beds, bedrooms, bathrooms, guest capacity, property type, neighbourhood) are one-hot encoded, normalized with `MinMaxScaler`, and compared with **cosine similarity**. The highest-quality listing in the filtered pool acts as the seed.

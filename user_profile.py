@@ -16,7 +16,7 @@ from typing import Optional
 import pandas as pd
 import numpy as np
 
-PROFILE_PATH = "data/user_profile.json"
+PROFILE_PATH = "user_profile.json"
 
 # Profil boyutları — her biri 0.0 ile 1.0 arasında
 # 0 = hiç önemli değil, 1 = çok önemli
@@ -69,7 +69,9 @@ class UserProfile:
         return DEFAULT_PROFILE.copy()
 
     def save(self):
-        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+        dir_name = os.path.dirname(self.path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
 

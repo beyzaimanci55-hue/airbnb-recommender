@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
 streamlit.log
-data/user_profile.json
+user_profile.json
+test_profile.json
