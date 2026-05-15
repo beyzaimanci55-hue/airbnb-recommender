@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 import warnings
 warnings.filterwarnings("ignore")
@@ -117,6 +117,8 @@ class UserPreferences:
     # Profil bilgisi
     score_weights: Optional[dict] = None   # kullanıcı profilinden
     exclude_ids: Optional[list] = None     # daha önce beğenilmeyenler
+    companion: str = "solo"
+    interests: list = field(default_factory=list)
 
 
 class HybridRecommender:
@@ -145,6 +147,19 @@ class HybridRecommender:
         # Kullanıcı profilinden gelen ağırlıklar (yoksa default)
         weights = prefs.score_weights or DEFAULT_WEIGHTS
         pool["quality_score"] = compute_quality_score(pool, weights)
+
+        # Companion/Interest based boosting
+        if hasattr(prefs, 'companion'):
+            if prefs.companion == 'family':
+                pool.loc[pool['Beds number'] >= 3, 'quality_score'] *= 1.15
+            elif prefs.companion == 'couple':
+                pool.loc[pool['Property type'].isin(['Entire home', 'Private room']), 'quality_score'] *= 1.05
+
+        if hasattr(prefs, 'interests') and prefs.interests:
+            if 'nature' in prefs.interests:
+                pool.loc[pool['Property type'] == 'Entire home', 'quality_score'] *= 1.05
+            if 'culture' in prefs.interests:
+                pool.loc[pool['Location score'] >= 4.8, 'quality_score'] *= 1.05
 
         # Fiyat tercihi varsa (avg_liked_price) seed'i buna göre seç
         seed_id = pool.loc[pool["quality_score"].idxmax(), "Listings id"]

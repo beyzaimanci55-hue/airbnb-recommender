@@ -65,18 +65,40 @@ cd airbnb-recommender
 pip install -r requirements.txt
 ```
 
-### 3. Add the dataset
-Download the Airbnb dataset and place it at:
-```
-data/airbnb.csv
-```
-The dataset should contain these columns:
-`Listings id, City, Season, Neighbourhood, Property type, Price, Beds number, Bedrooms number, Bathrooms number, Maximum allowed guests, Rating score, Accuracy score, Cleanliness score, Checkin score, Communication score, Location score, Value for money score, Host is superhost, Coordinates`
+### 3. Data Setup
+Ensure the dataset is placed at `data/airbnb.csv`. (The repo includes a sample file).
 
 ### 4. Run the app
 ```bash
 streamlit run app.py
 ```
+
+---
+
+## 🌐 Deployment (How to share your site)
+
+To share this project with others, the easiest way is using **Streamlit Community Cloud**:
+
+1. **Push your code to GitHub:**
+   - Create a new repository on GitHub.
+   - Push your local code:
+     ```bash
+     git init
+     git add .
+     git commit -m "Initial commit"
+     git branch -M main
+     git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+     git push -u origin main
+     ```
+
+2. **Deploy to Streamlit Cloud:**
+   - Go to [share.streamlit.io](https://share.streamlit.io/).
+   - Connect your GitHub account.
+   - Click "New app", select your repo, branch (`main`), and main file path (`app.py`).
+   - Click **Deploy!** Your site will be live at a public URL.
+
+3. **Managing Data on Cloud:**
+   - Since the dataset is large, ensure `data/airbnb.csv` is tracked by Git (or use Git LFS if it exceeds 100MB).
 
 ---
 
